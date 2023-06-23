@@ -1,4 +1,4 @@
-import type { ZodError } from 'zod';
+import { type ZodError, type ZodFormattedError } from 'zod';
 
 /**
  * The base structure for every custom error in the app
@@ -8,7 +8,7 @@ export abstract class CustomError extends Error {
   abstract serializeErrors(): {
     message: string;
     details?: string;
-    fieldErrors?: Record<any, string[] | undefined>;
+    fieldErrors?: ZodFormattedError<any>;
   }[];
 
   constructor(message: string) {
@@ -29,7 +29,7 @@ export class SchemaValidationError extends CustomError {
   }
 
   serializeErrors() {
-    const { fieldErrors } = this.error.flatten();
+    const fieldErrors = this.error.format();
     return [
       {
         fieldErrors,
