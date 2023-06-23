@@ -5,7 +5,11 @@ import type { ZodError } from 'zod';
  */
 export abstract class CustomError extends Error {
   abstract statusCode: number;
-  abstract serializeErrors(): { message: string; fieldPath?: (string | number)[]; details?: string }[];
+  abstract serializeErrors(): {
+    message: string;
+    details?: string;
+    fieldErrors?: Record<any, string[] | undefined>;
+  }[];
 
   constructor(message: string) {
     super(message);
@@ -25,7 +29,14 @@ export class SchemaValidationError extends CustomError {
   }
 
   serializeErrors() {
-    return this.error.issues.map((issue) => ({ message: issue.message, fieldPath: issue.path }));
+    const { fieldErrors } = this.error.flatten();
+    return [
+      {
+        fieldErrors,
+        message: 'Información inválida',
+        details: 'Por favor, corrige los errores y vuelve a intenarlo.',
+      },
+    ];
   }
 }
 
