@@ -6,9 +6,9 @@ import { CustomError } from './errors';
  */
 export function errorHandler(err: Error, req: Request, res: Response, next: NextFunction) {
   if (err instanceof CustomError) {
-    return res.status(err.statusCode).send({ errors: err.serializeErrors() });
+    return res.status(err.statusCode).send({ error: err.serializeError() });
   }
 
   console.error('An unexpected error occured:', err);
-  res.status(500).send({ errors: [{ message: 'Ocurrió un error inesperado de nuestra parte' }] });
+  res.status(500).send({ error: { message: 'Ocurrió un error inesperado de nuestra parte' } });
 }

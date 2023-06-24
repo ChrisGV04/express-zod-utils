@@ -5,11 +5,11 @@ import { type ZodError, type ZodFormattedError } from 'zod';
  */
 export abstract class CustomError extends Error {
   abstract statusCode: number;
-  abstract serializeErrors(): {
+  abstract serializeError(): {
     message: string;
     details?: string;
     fieldErrors?: ZodFormattedError<any>;
-  }[];
+  };
 
   constructor(message: string) {
     super(message);
@@ -28,15 +28,13 @@ export class SchemaValidationError extends CustomError {
     Object.setPrototypeOf(this, SchemaValidationError.prototype);
   }
 
-  serializeErrors() {
+  serializeError() {
     const fieldErrors = this.error.format();
-    return [
-      {
-        fieldErrors,
-        message: 'Información inválida',
-        details: 'Por favor, corrige los errores y vuelve a intenarlo.',
-      },
-    ];
+    return {
+      fieldErrors,
+      message: 'Información inválida',
+      details: 'Por favor, corrige los errores y vuelve a intenarlo.',
+    };
   }
 }
 
@@ -52,8 +50,8 @@ export class BadRequestError extends CustomError {
     Object.setPrototypeOf(this, BadRequestError.prototype);
   }
 
-  serializeErrors() {
-    return [{ message: this.error, details: this.details }];
+  serializeError() {
+    return { message: this.error, details: this.details };
   }
 }
 
@@ -75,8 +73,8 @@ export class UnauthorizedError extends CustomError {
     this.statusCode = this.status;
   }
 
-  serializeErrors() {
-    return [{ message: this.error, details: this.details }];
+  serializeError() {
+    return { message: this.error, details: this.details };
   }
 }
 
@@ -91,8 +89,8 @@ export class NotFoundError extends CustomError {
     Object.setPrototypeOf(this, NotFoundError.prototype);
   }
 
-  serializeErrors() {
-    return [{ message: this.error, details: this.details }];
+  serializeError() {
+    return { message: this.error, details: this.details };
   }
 }
 
@@ -107,7 +105,7 @@ export class UnknownError extends CustomError {
     Object.setPrototypeOf(this, UnknownError.prototype);
   }
 
-  serializeErrors() {
-    return [{ message: this.error, details: this.details }];
+  serializeError() {
+    return { message: this.error, details: this.details };
   }
 }
