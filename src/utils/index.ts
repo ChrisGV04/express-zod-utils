@@ -1,1 +1,1 @@
-export * from './pwd-manager';
+export * from './hash-encrypt';
